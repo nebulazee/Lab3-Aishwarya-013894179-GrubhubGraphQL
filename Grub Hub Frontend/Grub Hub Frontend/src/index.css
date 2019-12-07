@@ -1,0 +1,48 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.ownerOrder .header.sub {
+  margin: 5px 0;
+  text-align: left;
+}
+
+.ownerOrder .item{
+  text-align: left;
+  font-weight: 400;
+}
+.ownerOrder .quantity{
+  float: right;
+}
+.ownerOrder .quantity:after{
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+.ownerOrder .ui.card {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.divider {
+  margin-top: 10px !important;
+}
+
+.nav-item .nav-link {
+  border: none;
+  background: transparent;
+}
+.nav-item a:hover {
+  color: transparent;
+  cursor: pointer !important;
+}
+
+.right.menu .nav-item{
+ padding: 21px !important;
+}
