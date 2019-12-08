@@ -6,14 +6,6 @@ import cookie from 'react-cookies'
 import { Redirect } from 'react-router'
 import back1 from '../../../public/homeCust.jpg'
 
-import { gql } from 'apollo-boost';
-import { graphql } from 'react-apollo';
-import ApolloClient from 'apollo-boost';
-
-const client = new ApolloClient({
-    uri: 'http://localhost:3001/graphQL'
-  });
-
 var sectionStyle = {
     width: "100%",
     height: "100%",
@@ -28,13 +20,12 @@ class MenuOwner extends Component {
             rest_id: this.props.signedInUser.rest_id,
             item_name: "",
             item_desc: "",
-            item_price: 0,
+            item_price: "",
 
             item_tag: "",
             item_image: "",
             updatedTag: "",
-            section: "",
-            sectionsGq: []
+            section: ""
 
         }
 
@@ -109,49 +100,57 @@ class MenuOwner extends Component {
                 })
             })
     }
-    addSectionGql = () => {
-        client.mutate({
-            mutation:gql`
-            mutation addSection($sectionName:String,$rest_id:Int)
-            {
-                addSection(sectionName:$sectionName,rest_id:$rest_id) {
-                    sectionName,
-                    rest_id,
-                    items {
-                      item_name
-                      item_desc
-                      item_price
-                      rest_id
-                      item_tag
-                    }
-                }
-            }
-          `,
-            variables:{sectionName:this.state.section,rest_id:this.props.signedInUser.rest_id}
-        }).then(res=>{
-            console.log("updation successful")
-            this.componentDidMount()
-        })
+    addSection = (e) => {
+        e.preventDefault();
+        const data = {
+            sectionName: this.state.section,
+            rest_id: this.state.rest_id
+        }
+        Axios.post('http://localhost:3001/items/addSection', data, { headers: { 'Authorization': cookie.load('token') } })
+            .then(response => {
+                const sections = response.data.sections;
+                console.log(typeof (sections))
+                console.log(sections);
+                this.setState({
+                    sectionList: sections
+                })
+            })
     }
-    addItemGql =(e)=>{
-        console.log("ddff")
-        client.mutate({
-            mutation:gql`
-            mutation addItem($item_name:String,$item_desc:String,$item_price:Int,$item_tag:String,$rest_id:Int)
-            {
-                addItem(item_name:$item_name,item_desc:$item_desc,item_price:$item_price,item_tag:$item_tag,rest_id:$rest_id) {
-                    item_tag
-                    item_name
-                    item_price
-                }
-            }
-          `,
-            variables:{item_name:this.state.item_name,item_desc:this.state.item_desc,item_price:parseInt(this.state.item_price),item_tag:this.state.item_tag,rest_id:this.state.rest_id}
-        }).then(res=>{
-            console.log("addition successful")
-            this.componentDidMount()
-        })
+    addItem = (e) => {
+        e.preventDefault();
+
+        const data = new FormData();
+        data.append('item_name', this.state.item_name);
+        data.append('item_desc', this.state.item_desc);
+        data.append('item_price', this.state.item_price);
+        data.append('rest_id', this.state.rest_id);
+        data.append('item_tag', this.state.item_tag);
+        data.append('item_image', this.state.item_image);
+        console.log(data);
+
+        const headers = {
+            'content-type': 'multipart/form-data',
+            'Authorization': cookie.load('token')
+        }
+
+        /* const data={
+            item_name:this.state.item_name,
+            item_desc:this.state.item_desc,
+            item_price:this.state.item_price,
+            rest_id:this.state.rest_id,
+            item_tag:this.state.item_tag
+        } */
+        Axios.post("http://localhost:3001/items/addItem", data, { headers })
+            .then((response => {
+                const items = response.data.items;
+                console.log(typeof (items))
+                console.log(items);
+                this.setState({
+                    items: items
+                })
+            }))
     }
+
     imagehandler = (e) => {
         this.setState({
             item_image: e.target.files[0]
@@ -170,30 +169,25 @@ class MenuOwner extends Component {
     }
     componentDidMount() {
 
-        client.query({
-            query:gql`
-            query getAllSections($rest_id:Int)
-            {
-                getAllSections(rest_id:$rest_id) {
-                    rest_id
-                    items {
-                        item_name
-                        item_desc
-                        item_price
-                        rest_id
-                        item_tag
-                      }
-                      sectionName
-                }
-            }
-          `,
-          variables:{rest_id:this.props.signedInUser.rest_id}
-        }).then(response => {console.log('jijiji');
-        console.log(response.data.getAllSections[0])
-        this.setState({
-            sectionsGq:response.data.getAllSections
-        })
-    })
+        console.log("menu mounted")
+        Axios.defaults.withCredentials = true;
+        //take id from redux store
+
+        Axios.get("http://localhost:3001/items/getSections?rest_id=" + this.state.rest_id, { headers: { 'Authorization': cookie.load('token') } })
+            .then((response) => {
+                this.setState({
+                    sectionList: response.data.sections
+                })
+                Axios.get("http://localhost:3001/items/getItemsByRest?rest_id=" + this.state.rest_id, { headers: { 'Authorization': cookie.load('token') } })
+                    .then((response) => {
+                        const items = response.data.items;
+                        console.log(typeof (items))
+                        console.log(items);
+                        this.setState({
+                            items: items
+                        })
+                    })
+            })
     }
 
     render() {
@@ -201,23 +195,7 @@ class MenuOwner extends Component {
         var redirect = null;
         if (!cookie.load('token'))
             redirect = <Redirect to="/" />
-        if(this.state.sectionsGq != null) {
-            sectionNames = this.state.sectionsGq.map(section=>{
-                return <div class="col-md-12 mx-auto bg-white p-3 border">
-                    
-                             <h3 align="left">  {section.sectionName}:</h3>
-                             <table align="center" class="table bg-white">
-                                {
-                                    section.items.map(item=>{
-                                        if(item.item_tag == section.sectionName)
-                                    return  <tr><td>  {item.item_name}</td><td>{item.item_desc}</td><td>{item.item_price}</td></tr>
-                                    })
-                                }
-                                </table>
 
-                        </div>
-            })
-        }
         if (this.state.sectionList != null) {
             sectionNames = this.state.sectionList.map(section => {
                 return <div class="col-md-12 mx-auto bg-white p-3 border">
@@ -274,7 +252,7 @@ class MenuOwner extends Component {
 
                             </div>
                             <div className="form-group">
-                                <button onClick={this.addSectionGql} className="btn btn-success float-right login_btn" >Add Section</button>
+                                <button onClick={this.addSection} className="btn btn-success float-right login_btn" >Add Section</button>
                             </div>
                         </form>
                     </div>
@@ -302,7 +280,7 @@ class MenuOwner extends Component {
 
                             </div>
                             <div className="form-group">
-                                <button onClick={this.addItemGql} className="btn btn-success float-right login_btn" >Add Item</button>
+                                <button onClick={this.addItem} className="btn btn-success float-right login_btn" >Add Item</button>
                             </div>
                             <div className="input-group form-group">
                                 <form enctype="multipart/form-data" method="POST">

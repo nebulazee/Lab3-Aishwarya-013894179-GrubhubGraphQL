@@ -3,7 +3,15 @@ import axios from 'axios';
 import {Redirect} from 'react-router';
 import Navbaar from '../Navbar/Navbaar';
 
-import back1 from '../../../public/back.jpg'
+import back1 from '../../../public/back.jpg';
+
+import { gql } from 'apollo-boost';
+import { graphql } from 'react-apollo';
+import ApolloClient from 'apollo-boost';
+
+const client = new ApolloClient({
+    uri: 'http://localhost:3001/graphQL'
+  }); 
 
 var sectionStyle = {
   width: "100%",
@@ -26,25 +34,27 @@ class CustomerSignUp extends Component {
         this.passwordHandler=this.passwordHandler.bind(this);
         this.emailHandler=this.emailHandler.bind(this);
         this.addressHandler=this.addressHandler.bind(this);
-        this.customerSignUp=this.customerSignUp.bind(this);
+       // this.customerSignUp=this.customerSignUp.bind(this);
     }
-    customerSignUp = (e) => {
+    customerSignUpGql = (e)=>{
         e.preventDefault();
-        const data= {
-            email:this.state.email,
-            password:this.state.password,
-            name:this.state.name,
-            address:this.state.address,
-            
-        }
-        if(this.validateForm(data)){
-        axios.post('http://localhost:3001/details/addCustomer',data).then((response)=>{
-            console.log('customer signup '+response.data);
+        client.mutate({
+            mutation:gql`
+            mutation addCustomer($customer_name:String,$customer_email:String,$customer_password:String,$customer_address:String)
+            {
+                addCustomer(customer_name:$customer_name,customer_email:$customer_email,customer_password:$customer_password,customer_address:$customer_address) {
+                    customer_name
+                    customer_email
+                    customer_password
+                }
+            }
+          `,
+            variables:{customer_name:this.state.name,customer_email:this.state.email,customer_password:this.state.password,customer_address:this.state.address}
+        }).then(res=>{
             this.setState({
                 redirectVar:<Redirect to='/customerLogin'/>
             })
         })
-    }
     }
     emailHandler = (e) =>{
         this.setState({
@@ -163,7 +173,7 @@ class CustomerSignUp extends Component {
                                 </div>
 
                                 <div className="form-group">
-                                    <input type="button" onClick={this.customerSignUp}  value="Submit" className="btn btn-success float-right login_btn" />
+                                    <input type="button" onClick={this.customerSignUpGql}  value="Submit" className="btn btn-success float-right login_btn" />
                                 </div>
                             </form>
                         </div>

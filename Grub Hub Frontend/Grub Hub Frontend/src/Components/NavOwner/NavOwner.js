@@ -72,10 +72,7 @@ class NavOwner extends Component {
                             <Link to="/profileOwner"> <button className="nav-link" /* onClick={this.redirectProfileFunc} */ >Profile</button></Link>
                             
                             </a>
-                            <a className="item nav-item">
-                            <Link to="/ordersOwner"> <button className="nav-link" /* onClick={this.redirectOrders} */>Orders</button></Link>
-                            
-                            </a>
+                           
                             <a className="item nav-item">
                             <Link to="/manageRest"> <button className="nav-link"  /* onClick={this.redirectRestaurantFunc} */>Restaurant</button></Link>
                             
@@ -88,7 +85,7 @@ class NavOwner extends Component {
                         </div>
                         
                     </div>
-                    <div align="right" className="floatRight">Hello !  {this.props.signedInUser.owner_name} </div>
+                    <div align="right" className="floatRight">Welcome  {/* {this.props.signedInUser.owner_name */} </div>
                 </nav>
                 
             </div>

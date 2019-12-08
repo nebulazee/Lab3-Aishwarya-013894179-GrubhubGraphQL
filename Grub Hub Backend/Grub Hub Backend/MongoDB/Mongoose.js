@@ -7,6 +7,7 @@ var OrderDetailsSchema = require('../MongooseModels/OrderDetailsSchema')
 var OwnerSchema = require('../MongooseModels/OwnerSchema')
 var RestaurantSchema = require('../MongooseModels/RestaurantSchema')
 var MessagesSchema = require('../MongooseModels/MessagesSchema')
+var SectionSchema = require('../MongooseModels/SectionSchems')
 
 mongoose.connect('mongodb+srv://admin:hanumanji7@cluster0-26gwr.mongodb.net/GRUBHUBDB?retryWrites=true&w=majority',{
 useNewUrlParser:true,
@@ -28,6 +29,7 @@ var OrderDetails = mongoose.model('OrderDetails', OrderDetailsSchema);
 var Owner        = mongoose.model('Owner', OwnerSchema);
 var Restaurant   = mongoose.model('Restaurant', RestaurantSchema);
 var Messages     = mongoose.model('Messages',MessagesSchema);
+var Sections     = mongoose.model('Sections',SectionSchema);
 
 module.exports={
     Customer,
@@ -36,6 +38,7 @@ module.exports={
     OrderDetails,
     Owner,
     Restaurant,
-    Messages
+    Messages,
+    Sections
 }
 

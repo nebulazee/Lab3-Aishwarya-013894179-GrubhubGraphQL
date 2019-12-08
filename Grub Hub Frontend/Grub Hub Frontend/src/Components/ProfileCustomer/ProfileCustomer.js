@@ -35,9 +35,9 @@ class ProfileCustomer extends Component {
     constructor(props) {
         super(props)
         this.state={
-            name:"",
-            email:"",
-            address:""
+            name:this.props.signedInUser.customer_name,
+            email:this.props.signedInUser.customer_email,
+            address:this.props.signedInUser.customer_address
         }
        
         this.addPhoto=this.addPhoto.bind(this);
@@ -48,30 +48,7 @@ class ProfileCustomer extends Component {
         this.addresshandler=this.addresshandler.bind(this)
         console.log("main gql")
         
-        client.query({
-            query:gql`
-            query customer($customer_id:Int)
-            {
-                customer(customer_id:$customer_id) {
-                    customer_name
-                    customer_email
-                    customer_address
-                    customer_id
-                }
-            }
-          `,
-          variables:{customer_id:this.props.signedInUser.customer_id}
-        }).then(response => {console.log('jijiji');console.log(response.data)
-          this.setState({
-              name:response.data.customer.customer_name,
-              email:response.data.customer.customer_email,
-              address:response.data.customer.customer_address
-          }) 
-    })
-       /* const {data} = useQuery(getProfileQuery, {
-           variables: this.props.signedInUser.customer_id,
-       });   
-       console.log(data) */
+        
     }
     namehandler = (e)=>{
         
@@ -120,19 +97,11 @@ class ProfileCustomer extends Component {
               variables:{customer_id:this.props.signedInUser.customer_id}
             }).then(response => {console.log('jijiji');
             console.log(response.data)
-              this.setState({
-                  name:response.data.customer.customer_name,
-                  email:response.data.customer.customer_email,
-                  address:response.data.customer.customer_address
-              })
+         
               console.log("updated"+response.data.customer.customer_address); 
-              this.props.signInUser({
-                customer_id:response.data.customer.customer_id,
-                customer_name:response.data.customer.customer_name,
-                customer_email:response.data.customer.customer_name,
-                customer_address:response.data.customer.customer_address,
-                customer_password:this.props.signedInUser.customer_password
-            });
+              
+            alert("details updated successfully");
+            
         }) 
            // this.props.signInUser(response.data.cust[0]);
         })

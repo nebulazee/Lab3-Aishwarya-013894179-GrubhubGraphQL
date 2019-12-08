@@ -92,7 +92,7 @@ class NavCustomer extends Component {
                             </li>
                         </ul>
                     </div>
-                    <span align="right">Hello ! {this.props.signedInUser.customer_name}</span>
+                    <span align="right">Welcome {/* {this.props.signedInUser.customer_name} */}</span>
                     <Link to="/custCart"><button class="btn btn-danger my-cart-btn" /* onClick={this.redirectOrdersPage} */ ><img class="img img-responsive center-block" width="20" height="20"src={process.env.PUBLIC_URL + '/cart.png'}/>{" "+this.props.itemsInCart.items.length}</button></Link>
                    
                 </nav>

@@ -5,6 +5,13 @@ import Navbaar from '../Navbar/Navbaar';
 
 import back1 from '../../../public/back.jpg'
 
+import { gql } from 'apollo-boost';
+import { graphql } from 'react-apollo';
+import ApolloClient from 'apollo-boost';
+
+const client = new ApolloClient({
+    uri: 'http://localhost:3001/graphQL'
+  });
 var sectionStyle = {
   width: "100%",
   height: "100%",
@@ -184,28 +191,23 @@ class OwnerSignUp extends Component {
           });
           return formIsValid;
     }
-    ownerSignUp = (e)=>{
+    ownerSignUpGQl = (e)=>{
         e.preventDefault();
-        const data={
-            name:this.state.name,
-            email:this.state.email,
-            password:this.state.password,
-            contactNumber:this.state.contactNumber,
-            rest_name:this.state.rest_name,
-            zip:this.state.zip,
-            rest_address:this.state.rest_address,
-            cuisine:this.state.cuisine,
-            rest_contact:this.state.rest_contact
-        }
-        if(this.validateForm(data)){
-        axios.post('http://localhost:3001/details/addOwner',data)
-        .then((response)=>{
-            console.log(response.data);
+        client.mutate({
+            mutation:gql`
+            mutation addOwner($owner_name:String,$owner_password:String,$owner_email:String,$owner_contactNumber:Int,$rest_name:String,$rest_contact:Int,$rest_zip:Int,$rest_address:String,$cuisine:String)
+            {
+                addOwner(owner_name:$owner_name,owner_password:$owner_password,owner_email:$owner_email,owner_contactNumber:$owner_contactNumber,rest_name:$rest_name,rest_contact:$rest_contact,rest_zip:$rest_zip,rest_address:$rest_address,cuisine:$cuisine) {
+                   owner_name
+                }
+            }
+          `,
+            variables:{owner_name:this.state.name,owner_password:this.state.password,owner_email:this.state.email,owner_contactNumber:parseInt(this.state.contactNumber),rest_name:this.state.rest_name,rest_contact:parseInt(this.state.rest_contact),rest_zip:parseInt(this.state.zip),rest_address:this.state.rest_address,cuisine:this.state.cuisine}
+        }).then(res=>{
             this.setState({
                 redirectVar:<Redirect to='/ownerLogin'/>
             })
         })
-    }
     }
 
     render() {
@@ -274,7 +276,7 @@ class OwnerSignUp extends Component {
                                 </div>
                                
                                 <div className="form-group">
-                                    <input type="button" value="Submit" onClick={this.ownerSignUp} className="btn btn-success float-right login_btn" />
+                                    <input type="button" value="Submit" onClick={this.ownerSignUpGQl} className="btn btn-success float-right login_btn" />
                                 </div>
                             </form>
                         </div>

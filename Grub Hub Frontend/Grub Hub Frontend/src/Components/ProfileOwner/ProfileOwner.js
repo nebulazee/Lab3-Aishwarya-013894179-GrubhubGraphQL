@@ -32,18 +32,14 @@ class ProfileOwner extends Component {
              email:this.props.signedInUser.owner_email,
              contact:this.props.signedInUser.owner_contactNumber,
              image:"http://localhost:3001"+this.props.signedInUser.owner_image,
-            /*  restaurant:this.props.signedInUser.re */
         }
-        this.updateOwner=this.updateOwner.bind(this);
         this.addPhoto=this.addPhoto.bind(this);
         this.imagehandler=this.imagehandler.bind(this);
 
         this.contacthandler=this.contacthandler.bind(this);
         this.namehandler=this.namehandler.bind(this);
         this.emailhandler=this.emailhandler.bind(this);
-       // this.addresshandler=this.addresshandler.bind(this);
-     /*    this.cuisinehandler=this.cuisinehandler.bind(this);
-        this.restauranthandler=this.restauranthandler.bind(this); */
+     
     }
     namehandler = (e)=>{
         this.setState({
@@ -80,9 +76,10 @@ class ProfileOwner extends Component {
                 }
             }
           `,
-            variables:{owner_id:this.props.signedInUser.owner_id,owner_name:this.state.name,owner_email:this.state.email,owner_contactNumber:this.state.contact}
+            variables:{owner_id:this.props.signedInUser.owner_id,owner_name:this.state.name,owner_email:this.state.email,owner_contactNumber:parseInt(this.state.contact)}
         }).then(res=>{
-            console.log("updation successful")
+            console.log("updation successful");
+            alert("details updated successfully")
           
         })
        
@@ -91,12 +88,7 @@ class ProfileOwner extends Component {
 
     
     addPhoto=(e)=>{
-        /*  const data={
-             customer_id:this.props.signedInUser.customer_id,
-             customer_image:this.state.image,
-             customer_name:this.state.name
-         } */
- 
+      
          const data = new FormData();
          data.append('owner_id', this.props.signedInUser.owner_id);
          data.append('owner_image', this.state.image);
