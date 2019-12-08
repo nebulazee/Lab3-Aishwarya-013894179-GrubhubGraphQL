@@ -42,7 +42,7 @@ class MenuOwner extends Component {
         this.itemdeschandler = this.itemdeschandler.bind(this);
         this.itempricehandler = this.itempricehandler.bind(this);
         this.itemtaghandler = this.itemtaghandler.bind(this);
-        this.addItem = this.addItem.bind(this);
+      //  this.addItem = this.addItem.bind(this);
         console.log("constructor loaded")
         //this.componentDid()
         this.taghandler = this.taghandler.bind(this);

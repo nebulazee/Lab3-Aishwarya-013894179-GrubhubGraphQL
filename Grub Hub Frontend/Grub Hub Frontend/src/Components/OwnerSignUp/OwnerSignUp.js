@@ -41,7 +41,7 @@ class OwnerSignUp extends Component {
         this.contactNumberhandler=this.contactNumberhandler.bind(this);
         this.rest_namehandler=this.rest_namehandler.bind(this);
         this.ziphandler=this.ziphandler.bind(this);
-        this.ownerSignUp=this.ownerSignUp.bind(this);
+       
         this.cuisinehandler=this.cuisinehandler.bind(this);
         this.restcontacthandler=this.restcontacthandler.bind(this);
         this.restaddresshandler=this.restaddresshandler.bind(this);
